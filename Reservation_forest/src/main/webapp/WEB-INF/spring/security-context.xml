@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+	xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+ 	http://www.springframework.org/schema/beans/spring-beans.xsd
+ 	http://www.springframework.org/schema/security
+ 	http://www.springframework.org/schema/security/spring-security.xsd">
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- class <beans:bean id="RegisterPasswordEncoder" class="com.kopo.security.RegisterPasswordEncoder"></beans:bean> -->
+	<!-- spring security api included -->
+	
+	
+	<beans:bean id="bcryptpasswordEncoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+	<beans:bean id="joinUsers"
+		class="com.kopo.security.JoinUserDetailsService" />
+
+<!-- 	<authentication-manager>
+		<authentication-provider>
+			<user-service>
+				<user name="admin" password="{noop}1234"
+					authorities="ROLE_ADMIN, ROLE_MANAGER, ROLE_USER" />
+				<user name="manager" password="{noop}1235"
+					authorities="ROLE_MANAGER" />
+				<user name="guest" password="{noop}1236"
+					authorities="ROLE_USER" />
+			</user-service>
+			<password-encoder ref="bcryptpasswordEncoder" />
+		</authentication-provider>
+	</authentication-manager> 
+ -->
+
+	<http auto-config="true" use-expressions="true">
+		<!-- <intercept-url pattern="/" access="permitAll" />-->
+		 <intercept-url pattern="/login" 
+			access="permitAll" /> 
+		<intercept-url pattern="/admin/**"
+			access="hasAuthority('ROLE_ADMIN')" /> <!--/admin uri에 접속할 수 있는 조건 권한 -->
+		<intercept-url pattern="/manager/**"
+			access="hasRole('ROLE_MANAGER')" />
+		<intercept-url pattern="/member/**"
+			access="isAuthenticated()" /> <!--가입한 사람이 로그인 했을 경우 -->
+		<intercept-url pattern="/**" access="permitAll" />
+		<form-login login-page="/login" username-parameter="username" password-parameter="password" default-target-url="/loginSuccess"/> <!-- default-target-url="/loginSuccess" -->
+		<csrf />
+		<logout logout-success-url="/logoutredirect" invalidate-session="true" delete-cookies="JSESSIONID" /> <!-- 세션정보제거 -->
+		<access-denied-handler
+			error-page="/acccessError" />
+	</http>
+	
+		<authentication-manager>
+		<authentication-provider
+			user-service-ref="joinUsers">
+			<password-encoder ref="bcryptpasswordEncoder" />
+		</authentication-provider>
+	</authentication-manager>
+
+</beans:beans>

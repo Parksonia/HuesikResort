@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kopo.mapper.RegistrationMapper">
+
+<insert id="insertNewUser" parameterType="com.kopo.security.JoinUserDetails">
+	insert into users (username,password,user_name,mobile) values ('${Registration.username}','${Registration.password}','${Registration.user_name}','${Registration.mobile}')
+</insert>
+
+<select id="selectUserByUserId" parameterType="String" resultType="com.kopo.security.JoinUserDetails">
+		select * from users where username='${Username}'
+</select>
+
+</mapper>
